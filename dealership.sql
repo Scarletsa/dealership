@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 26, 2018 at 03:04 PM
+-- Generation Time: Apr 26, 2018 at 04:08 PM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 7.1.1
 
@@ -389,7 +389,6 @@ INSERT INTO `on_lot` (`Vin`, `Spot`, `Since`) VALUES
 ('TL2NV1432M1853916', 29, '2018-01-01'),
 ('TW1PI0484S4344959', 13, '2018-01-01'),
 ('TX1CP3022E4318955', 30, '2018-01-01'),
-('UG3BW7337T4736717', 4, '2018-01-01'),
 ('UZ8KH9414O8613314', 66, '2018-01-01'),
 ('VB1BH1295O3636438', 34, '2018-01-01'),
 ('VT5KO6957N5577183', 40, '2018-01-01'),
@@ -450,6 +449,8 @@ CREATE TABLE `sold` (
 
 INSERT INTO `sold` (`DateSold`, `empid`, `invoiceNum`, `daysOnLot`, `priceSold`, `Vin`) VALUES
 ('2018-02-23', 10011, 10006589231, 83, 38700, 'WJ6OP4202Q3983638'),
+('2018-04-26', 10002, 10410986922, 116, 22500, 'UG3BW7337T4736717'),
+('2018-04-26', 10002, 10505907419, 116, 22500, 'UG3BW7337T4736717'),
 ('2018-04-19', 10001, 10823986762, 109, 20000, 'DJ0HZ3377K6679913'),
 ('2018-01-18', 10006, 12025004870, 4, 27000, 'GW5DB6590R2443114'),
 ('2018-01-23', 10001, 22658894133, 64, 25500, 'PU2FW8042B8946147'),
@@ -489,6 +490,7 @@ CREATE TABLE `sold_by` (
 
 INSERT INTO `sold_by` (`empid`, `invoiceNum`, `loanNum`) VALUES
 (10011, 10006589231, 200145),
+(10002, 10410986922, 0),
 (10001, 10823986762, 668555),
 (10006, 12025004870, 0),
 (10001, 22658894133, 325910),
@@ -602,7 +604,7 @@ INSERT INTO `vehicle` (`Vin`, `boughtPrice`, `listedPrice`, `lowestPrice`, `make
 ('TW1PI0484S4344959', 16500, 22000, 18975, 'Mazda', 'Mazda3', 'Red', 2018, 'On_Lot'),
 ('TX1CP3022E4318955', 20437.5, 27250, 23503.15, 'Mazda', 'Mazda6', 'Red', 2018, 'On_Lot'),
 ('UF9EO5805B7636963', 16125, 21500, 18543.75, 'Mazda', 'Mazda3', 'Silver', 2018, 'Sold'),
-('UG3BW7337T4736717', 16987.5, 22650, 19535.65, 'Mazda', 'Mazda3', 'Black', 2018, 'On_Lot'),
+('UG3BW7337T4736717', 16987.5, 22650, 19535.65, 'Mazda', 'Mazda3', 'Black', 2018, 'Sold'),
 ('UZ8KH9414O8613314', 17962.5, 23950, 20656.88, 'Mazda', 'CX5', 'Gold', 2017, 'On_Lot'),
 ('VB1BH1295O3636438', 17625, 23500, 20268.75, 'Mazda', 'Mazda6', 'Silver', 2018, 'On_Lot'),
 ('VP2EC3071L5716928', 24750, 33000, 28462.5, 'Mazda', 'CX5', 'Black', 2018, 'Sold'),
@@ -661,14 +663,17 @@ INSERT INTO `worksin` (`empid`, `did`, `started`, `ended`) VALUES
 --
 ALTER TABLE `department`
   ADD PRIMARY KEY (`did`),
-  ADD UNIQUE KEY `dname` (`dname`);
+  ADD UNIQUE KEY `dname` (`dname`),
+  ADD KEY `did` (`did`,`dname`);
 
 --
 -- Indexes for table `employee`
 --
 ALTER TABLE `employee`
   ADD PRIMARY KEY (`empid`),
-  ADD UNIQUE KEY `SSN` (`SSN`);
+  ADD UNIQUE KEY `SSN` (`SSN`),
+  ADD KEY `name` (`name`,`phone`,`email`),
+  ADD KEY `empid` (`empid`,`name`,`phone`,`email`);
 
 --
 -- Indexes for table `installed`
@@ -704,14 +709,15 @@ ALTER TABLE `options`
 --
 ALTER TABLE `sold`
   ADD PRIMARY KEY (`invoiceNum`),
-  ADD KEY `Vin` (`Vin`);
+  ADD KEY `Vin` (`Vin`),
+  ADD KEY `empid` (`empid`,`Vin`);
 
 --
 -- Indexes for table `sold_by`
 --
 ALTER TABLE `sold_by`
   ADD UNIQUE KEY `invoiceNum` (`invoiceNum`),
-  ADD UNIQUE KEY `loanNum` (`loanNum`);
+  ADD KEY `empid` (`empid`,`invoiceNum`);
 
 --
 -- Indexes for table `trim_level`
@@ -723,7 +729,8 @@ ALTER TABLE `trim_level`
 -- Indexes for table `vehicle`
 --
 ALTER TABLE `vehicle`
-  ADD PRIMARY KEY (`Vin`);
+  ADD PRIMARY KEY (`Vin`),
+  ADD KEY `Vin` (`Vin`,`listedPrice`,`make`,`model`,`color`,`year`);
 
 --
 -- Indexes for table `worksin`

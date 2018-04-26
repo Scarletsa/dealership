@@ -20,13 +20,14 @@ $date = date("Y-m-d");
 if ($_POST['sellPrice'] >= $_SESSION['carArray'][0]['lowestPrice']) {
 
   $stmt = "INSERT INTO sold (Vin, empid, DateSold, invoiceNum, daysOnLot, priceSold) VALUES ('" . $_SESSION['carArray'][0]['Vin'] . "', '" . $_SESSION['user'] . "', '" . $date . "', '" . $invoiceNumber . "', '" . $daysOnLot   . "', '" . $_POST['sellPrice'] . "')";
-  print($stmt);
   $result = $dbh->query($stmt);
-  $stmt = "INSERT INTO sold_by VALUES ('" . $_SESSION['user'] . "', '" . $invoiceNumber . "', '" . $loanNumber . "')";
-  print($stmt);
+  if ($_POST['financing'] == "Yes") {
+    $stmt = "INSERT INTO sold_by VALUES ('" . $_SESSION['user'] . "', '" . $invoiceNumber . "', '" . $loanNumber . "')";
+  } else {
+    $stmt = "INSERT INTO sold_by VALUES ('" . $_SESSION['user'] . "', '" . $invoiceNumber . "', '0')";
+  }
   $result = $dbh->query($stmt);
   $stmt = "UPDATE Vehicle SET Type = 'Sold' WHERE Vin = '" . $_SESSION['carArray'][0]['Vin'] . "'";
-  print($stmt);
   $result = $dbh->query($stmt);
   $_SESSION['sellComplete'] = "Car sold successfully!";
 } else {
