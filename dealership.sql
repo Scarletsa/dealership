@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 26, 2018 at 04:08 PM
+-- Generation Time: Apr 27, 2018 at 12:08 AM
 -- Server version: 10.1.21-MariaDB
 -- PHP Version: 7.1.1
 
@@ -730,7 +730,9 @@ ALTER TABLE `trim_level`
 --
 ALTER TABLE `vehicle`
   ADD PRIMARY KEY (`Vin`),
-  ADD KEY `Vin` (`Vin`,`listedPrice`,`make`,`model`,`color`,`year`);
+  ADD KEY `Vin` (`Vin`,`listedPrice`,`make`,`model`,`color`,`year`),
+  ADD KEY `make` (`make`),
+  ADD KEY `model` (`model`);
 
 --
 -- Indexes for table `worksin`
